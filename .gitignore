@@ -11,3 +11,7 @@ ml/artifacts/
 
 !ml/data/qol_features.csv
 !ml/data/feature_quality.csv
+
+node_modules/
+.next/
+ml/data/wesad_*.csv
