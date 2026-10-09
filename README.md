@@ -78,3 +78,13 @@ clearly separate demo values from live data. UI redesign is pending selection.
 See `ml/MODEL_CARD.md` for the richer ECG/EDA pipeline and its limits.
 Train its local artifact with `.venv/bin/python ml/stress_model.py train`.
 EDA needs separate supported hardware; the current watch does not supply it.
+
+## Dependency maintenance
+
+Use npm with the checked-in package-lock.json. The stale alternate pnpm lock
+was removed so it cannot silently reinstall the old vulnerable tree. The
+security update pins Next 15.5.27, React 19.3.0, Axios 1.20.0, Tailwind 4.3.3
+and PostCSS 8.5.29, with reviewed lodash/browserslist/PostCSS overrides for
+transitive advisories. `npm ci --legacy-peer-deps` and `npm audit` passed with
+zero known npm vulnerabilities at update time. This is not an overall security
+audit: authentication, durable health-data storage and deployment remain work.
