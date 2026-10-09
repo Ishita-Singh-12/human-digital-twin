@@ -1,12 +1,12 @@
 # Persistent per-user readings
 
 Deploy this folder as a Node Appwrite Function (entrypoint main.js, build npm ci).
-Create a database and collection with document security enabled. Collection creation
-permission: authenticated users only. No collection-wide read/update/delete permission.
+Create a database and table with row security enabled. Collection creation
+permission: authenticated users only. No table-wide read/update/delete permission.
 Attributes: ownerId string(36) required, metric enum[bpm,steps,calories,sleep] required,
 numericValue float optional, textValue string(120) optional, observedAt datetime required,
 receivedAt datetime required. Index ownerId + metric + observedAt and ownerId + observedAt.
-Set HDT_DATABASE_ID and HDT_COLLECTION_ID on the function. Configure authenticated-user
+Set HDT_DATABASE_ID and HDT_TABLE_ID on the function. Configure authenticated-user
 execution. Reads and writes use a verified user JWT and enforce row permissions, not an
 admin API key or a caller-supplied owner ID. Browser and watch must sign in through Appwrite.
 
