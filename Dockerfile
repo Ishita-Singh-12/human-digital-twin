@@ -6,6 +6,7 @@ RUN python3 -m venv /app/.venv && /app/.venv/bin/pip install --no-cache-dir -r m
 COPY web/health-dashboard/package*.json web/health-dashboard/
 RUN cd web/health-dashboard && npm ci --legacy-peer-deps
 COPY . .
+RUN /app/.venv/bin/python ml/stress_model.py train
 WORKDIR /app/web/health-dashboard
 ENV HDT_PROJECT_ROOT=/app HDT_PYTHON=/app/.venv/bin/python
 RUN npm run build

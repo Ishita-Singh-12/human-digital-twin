@@ -74,3 +74,7 @@ values in process memory, so cold starts and multiple instances can lose or
 split readings. It is not a durable, authenticated per-user health datastore.
 The existing dashboard contains demo fallback metrics; its redesign must
 clearly separate demo values from live data. UI redesign is pending selection.
+
+See `ml/MODEL_CARD.md` for the richer ECG/EDA pipeline and its limits.
+Train its local artifact with `.venv/bin/python ml/stress_model.py train`.
+EDA needs separate supported hardware; the current watch does not supply it.

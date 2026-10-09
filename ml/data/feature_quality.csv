@@ -1,0 +1,133 @@
+subject_id,phase,ecg_quality,has_eda
+P028,relax,ok,True
+P028,stress,ok,True
+P003,relax,ok,True
+P003,stress,ok,True
+P012,relax,ok,True
+P012,stress,ok,True
+P039,relax,ok,True
+P039,stress,ok,True
+P066,relax,ok,True
+P066,stress,ok,True
+P047,relax,ok,True
+P047,stress,ok,True
+P054,relax,ok,True
+P054,stress,ok,True
+P020,relax,ok,True
+P020,stress,ok,True
+P016,relax,ok,True
+P016,stress,Need at least 15 finite RR intervals between 300 and 2000 ms,True
+P018,relax,ok,True
+P018,stress,ok,True
+P004,relax,ok,True
+P004,stress,ok,True
+P058,relax,ok,True
+P058,stress,ok,True
+P059,relax,ok,True
+P059,stress,ok,True
+P005,relax,ok,True
+P005,stress,ok,True
+P060,relax,ok,True
+P060,stress,ok,True
+P065,relax,ok,True
+P065,stress,ok,True
+P053,relax,ok,True
+P053,stress,ok,True
+P046,relax,ok,True
+P046,stress,could not convert string to float: '-',True
+P024,relax,could not convert string to float: '-',True
+P024,stress,ok,True
+P043,relax,could not convert string to float: '-',True
+P043,stress,could not convert string to float: '-',True
+P041,relax,ok,True
+P041,stress,ok,True
+P033,relax,ok,True
+P033,stress,ok,True
+P038,relax,ok,True
+P038,stress,ok,True
+P006,relax,ok,True
+P006,stress,ok,True
+P052,relax,ok,True
+P052,stress,ok,True
+P011,relax,ok,True
+P011,stress,ok,True
+P013,relax,ok,True
+P013,stress,ok,True
+P063,relax,ok,True
+P063,stress,could not convert string to float: '-',True
+P045,relax,ok,True
+P045,stress,ok,True
+P014,relax,could not convert string to float: '-',True
+P014,stress,ok,True
+P008,relax,ok,True
+P008,stress,ok,True
+P030,relax,ok,True
+P030,stress,ok,True
+P037,relax,could not convert string to float: '-',True
+P037,stress,ok,False
+P049,relax,ok,True
+P049,stress,ok,True
+P029,relax,ok,True
+P029,stress,ok,True
+P009,relax,ok,True
+P009,stress,ok,True
+P064,relax,could not convert string to float: '-',True
+P064,stress,ok,True
+P023,relax,ok,True
+P023,stress,could not convert string to float: '-',True
+P040,relax,ok,True
+P040,stress,ok,True
+P025,relax,ok,True
+P025,stress,ok,True
+P056,relax,could not convert string to float: '-',True
+P056,stress,ok,True
+P007,relax,ok,True
+P007,stress,could not convert string to float: '-',True
+P010,relax,ok,True
+P010,stress,ok,True
+P015,relax,ok,False
+P015,stress,ok,False
+P026,relax,ok,True
+P026,stress,ok,True
+P036,relax,could not convert string to float: '-',True
+P036,stress,ok,False
+P021,relax,Need at least 15 finite RR intervals between 300 and 2000 ms,True
+P021,stress,ok,True
+P019,relax,ok,True
+P019,stress,ok,True
+P032,relax,ok,True
+P032,stress,ok,True
+P001,relax,ok,True
+P001,stress,ok,False
+P031,relax,ok,True
+P031,stress,ok,True
+P057,relax,could not convert string to float: '-',True
+P057,stress,ok,True
+P042,relax,could not convert string to float: '-',True
+P042,stress,could not convert string to float: '-',True
+P050,stress,ok,True
+P050,relax,ok,True
+P022,relax,could not convert string to float: '-',True
+P022,stress,ok,True
+P061,stress,ok,False
+P061,relax,ok,True
+P055,relax,ok,True
+P055,stress,ok,True
+P002,relax,ok,True
+P002,stress,ok,True
+P035,relax,Need at least 15 finite RR intervals between 300 and 2000 ms,True
+P035,stress,ok,True
+P051,relax,ok,True
+P051,stress,could not convert string to float: '-',True
+P027,relax,ok,True
+P027,stress,ok,True
+P017,relax,ok,True
+P017,stress,ok,True
+P062,relax,ok,True
+P062,stress,ok,True
+P034,relax,ok,True
+P034,stress,ok,True
+P044,relax,ok,False
+P044,stress,could not convert string to float: '-',False
+P048,relax,ok,True
+P048,stress,ok,True

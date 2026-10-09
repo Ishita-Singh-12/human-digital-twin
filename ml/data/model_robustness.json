@@ -1,0 +1,266 @@
+{
+  "17": {
+    "bpm": {
+      "records": 88,
+      "subjects": 44,
+      "accuracy": 0.5454545454545454,
+      "balanced_accuracy": 0.5454545454545454,
+      "subject_bootstrap_95ci": [
+        0.4545454545454546,
+        0.6363636363636364
+      ],
+      "confusion_matrix": [
+        [
+          23,
+          21
+        ],
+        [
+          19,
+          25
+        ]
+      ],
+      "folds": [
+        {
+          "subjects_test": 9,
+          "accuracy": 0.5555555555555556,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.61489898989899
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.6111111111111112,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.5732323232323232
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.5555555555555556,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.5138888888888888
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.5,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.6300505050505051
+        },
+        {
+          "subjects_test": 8,
+          "accuracy": 0.5,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.5694444444444445
+        }
+      ]
+    },
+    "eda": {
+      "records": 88,
+      "subjects": 44,
+      "accuracy": 0.6590909090909091,
+      "balanced_accuracy": 0.6590909090909091,
+      "subject_bootstrap_95ci": [
+        0.5681818181818182,
+        0.7386363636363636
+      ],
+      "confusion_matrix": [
+        [
+          30,
+          14
+        ],
+        [
+          16,
+          28
+        ]
+      ],
+      "folds": [
+        {
+          "subjects_test": 9,
+          "accuracy": 0.7222222222222222,
+          "model": "LogisticRegression",
+          "inner_balanced_accuracy": 0.6439393939393939
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.6666666666666666,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6868686868686869
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.7222222222222222,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6729797979797979
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.6666666666666666,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6578282828282829
+        },
+        {
+          "subjects_test": 8,
+          "accuracy": 0.5,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6944444444444443
+        }
+      ]
+    }
+  },
+  "73": {
+    "bpm": {
+      "records": 88,
+      "subjects": 44,
+      "accuracy": 0.5454545454545454,
+      "balanced_accuracy": 0.5454545454545454,
+      "subject_bootstrap_95ci": [
+        0.4545454545454546,
+        0.6363636363636364
+      ],
+      "confusion_matrix": [
+        [
+          23,
+          21
+        ],
+        [
+          19,
+          25
+        ]
+      ],
+      "folds": [
+        {
+          "subjects_test": 9,
+          "accuracy": 0.5555555555555556,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.61489898989899
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.6111111111111112,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.5732323232323232
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.5555555555555556,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.5138888888888888
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.5,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.6300505050505051
+        },
+        {
+          "subjects_test": 8,
+          "accuracy": 0.5,
+          "model": "RandomForestClassifier",
+          "inner_balanced_accuracy": 0.5694444444444445
+        }
+      ]
+    },
+    "eda": {
+      "records": 88,
+      "subjects": 44,
+      "accuracy": 0.6590909090909091,
+      "balanced_accuracy": 0.6590909090909091,
+      "subject_bootstrap_95ci": [
+        0.5681818181818182,
+        0.7386363636363636
+      ],
+      "confusion_matrix": [
+        [
+          30,
+          14
+        ],
+        [
+          16,
+          28
+        ]
+      ],
+      "folds": [
+        {
+          "subjects_test": 9,
+          "accuracy": 0.7222222222222222,
+          "model": "LogisticRegression",
+          "inner_balanced_accuracy": 0.6439393939393939
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.6666666666666666,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6868686868686869
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.7222222222222222,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6729797979797979
+        },
+        {
+          "subjects_test": 9,
+          "accuracy": 0.6666666666666666,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6578282828282829
+        },
+        {
+          "subjects_test": 8,
+          "accuracy": 0.5,
+          "model": "SVC",
+          "inner_balanced_accuracy": 0.6944444444444443
+        }
+      ]
+    }
+  },
+  "eda_all_valid_paired": {
+    "records": 120,
+    "subjects": 60,
+    "accuracy": 0.5666666666666667,
+    "balanced_accuracy": 0.5666666666666667,
+    "subject_bootstrap_95ci": [
+      0.4916666666666667,
+      0.6416666666666666
+    ],
+    "confusion_matrix": [
+      [
+        30,
+        30
+      ],
+      [
+        22,
+        38
+      ]
+    ],
+    "folds": [
+      {
+        "subjects_test": 12,
+        "accuracy": 0.5833333333333334,
+        "model": "RandomForestClassifier",
+        "inner_balanced_accuracy": 0.6354166666666666
+      },
+      {
+        "subjects_test": 12,
+        "accuracy": 0.4166666666666667,
+        "model": "RandomForestClassifier",
+        "inner_balanced_accuracy": 0.6979166666666666
+      },
+      {
+        "subjects_test": 12,
+        "accuracy": 0.5833333333333334,
+        "model": "LogisticRegression",
+        "inner_balanced_accuracy": 0.6458333333333334
+      },
+      {
+        "subjects_test": 12,
+        "accuracy": 0.5416666666666666,
+        "model": "RandomForestClassifier",
+        "inner_balanced_accuracy": 0.6666666666666666
+      },
+      {
+        "subjects_test": 12,
+        "accuracy": 0.7083333333333334,
+        "model": "RandomForestClassifier",
+        "inner_balanced_accuracy": 0.625
+      }
+    ]
+  }
+}

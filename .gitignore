@@ -6,3 +6,8 @@ __pycache__/
 .env
 .env.local
 *.pyc
+
+ml/artifacts/
+
+!ml/data/qol_features.csv
+!ml/data/feature_quality.csv
