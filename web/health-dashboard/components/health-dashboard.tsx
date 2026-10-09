@@ -1,213 +1,92 @@
 "use client";
+import { useEffect, useState } from "react";
+import { Heart, Footprints, Moon, Flame, ArrowUpRight, Radio, Beaker, Settings2, Activity } from "lucide-react";
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { HumanAvatar } from "@/components/human-avatar";
-import { StatCard } from "@/components/stat-card";
-import { Card } from "@/components/ui/card";
-import { Heart, Activity, Footprints, Flame, Moon, Timer } from "lucide-react";
-
-// Health data structure
-export interface HealthData {
-  heartRate: number;
-  steps: number;
-  calories: number;
-  sleep: string;
-  activity: {
-    minutes: number;
-    intensity: number;
-  };
-  stress: number;
-}
+// Retained for the unused avatar component while the journal replaces its UI.
+export interface HealthData { heartRate: number; steps: number; calories: number; sleep: string; activity: { minutes: number; intensity: number }; stress: number; }
+type Reading = { bpm: number | null; steps: number | null; calories: number | null; sleep: string | null };
+type Point = { at: number; bpm: number };
+const DEMO: Reading = { bpm: 72, steps: 8432, calories: 1850, sleep: "7.2 hours" };
+const SAMPLE = [72,74,71,79,76,83,80,76,81,79,75,78,71,75,78,73,74,72];
+const numeric = (v: unknown) => typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null;
+const format = (v: number | null) => v === null ? "--" : v.toLocaleString();
 
 export function HealthDashboard() {
-  const [healthData, setHealthData] = useState<HealthData>({
-    heartRate: 72,
-    steps: 8432,
-    calories: 1850,
-    sleep: "",
-    activity: {
-      minutes: 45,
-      intensity: 72,
-    },
-    stress: 32,
-  });
-
-  // New states for prediction
-  const [prediction, setPrediction] = useState<string>("");
-  const [accuracy, setAccuracy] = useState<string>("");
-  const [isPredicting, setIsPredicting] = useState(false);
+  const [demo, setDemo] = useState(false);
+  const [data, setData] = useState<Reading>({ bpm: null, steps: null, calories: null, sleep: null });
+  const [points, setPoints] = useState<Point[]>([]);
+  const [status, setStatus] = useState("Connecting to your data...");
+  const [updated, setUpdated] = useState<number | null>(null);
+  const [range, setRange] = useState("Today");
+  const [tab, setTab] = useState("Trends");
+  const [eda, setEda] = useState("");
+  const [modelResult, setModelResult] = useState("");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const fetchHealthData = async () => {
+    if (demo) return;
+    let active = true;
+    const controller = new AbortController();
+    const read = async () => {
       try {
-        const response = await axios.get("/api/health-data");
-        if (!response.data) {
-          console.log("Response data is empty!");
-          return;
-        }
-
-        const data = response.data;
-        console.log("Fetched health data:", data);
-
-        // Map API data to our health data structure
-        setHealthData({
-          heartRate: data.bpm || 0,
-          steps: data.steps || 0,
-          calories: data.calories || 0,
-          sleep: data.sleep,
-          activity: {
-            minutes: data.activityMinutes || 45,
-            intensity: data.activityIntensity || 72,
-          },
-          stress: data.stress || 32,
-        });
+        const res = await fetch("/api/health-data", { signal: controller.signal, cache: "no-store" });
+        const value = await res.json();
+        if (!res.ok) throw new Error(value.error || "Data service unavailable");
+        if (!active) return;
+        const next = { bpm: numeric(value.bpm), steps: numeric(value.steps), calories: numeric(value.calories), sleep: typeof value.sleep === "string" && value.sleep.trim() ? value.sleep : null };
+        setData(next); setUpdated(Date.now()); setStatus("Data service connected. Sample age is not supplied by the current backend.");
+        if (next.bpm !== null) setPoints(previous => [...previous.slice(-119), { at: Date.now(), bpm: next.bpm! }]);
       } catch (error) {
-        console.error("Error fetching health data:", error);
+        if (!active) return;
+        setStatus(error instanceof Error ? error.message : "Data service unavailable");
+        setUpdated(null); setData({ bpm: null, steps: null, calories: null, sleep: null });
       }
     };
+    read(); const interval = setInterval(read, 30000);
+    return () => { active = false; controller.abort(); clearInterval(interval); };
+  }, [demo]);
 
-    fetchHealthData(); // Initial fetch
-    const intervalId = setInterval(fetchHealthData, 5000); // Fetch every 5 seconds
-
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, []);
-
-  // Function to predict health based on BPM
-  const handlePredictHealth = async () => {
-    setIsPredicting(true);
-    setPrediction("");
-    setAccuracy("");
-
+  const shown = demo ? DEMO : data;
+  const chartValues = demo && range === "Today" ? SAMPLE : !demo && range === "Today" ? points.map(p => p.bpm) : [];
+  const low = chartValues.length ? Math.floor((Math.min(...chartValues) - 5) / 5) * 5 : 50;
+  const high = chartValues.length ? Math.ceil((Math.max(...chartValues) + 5) / 5) * 5 : 100;
+  const path = chartValues.map((v, i) => `${i ? "L" : "M"}${i * 282 / Math.max(chartValues.length - 1, 1)} ${115 - (v-low)/(high-low)*95}`).join(" ");
+  const labelTime = (t: number) => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const evaluate = async () => {
+    setBusy(true); setModelResult("");
     try {
-      const res = await fetch("/api/run-model", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ bpm: Number(healthData.heartRate) }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        // Parse the output to extract accuracy and predicted health
-        const outputLines = data.output.split("\n");
-        const accuracyLine = outputLines.find((line: string) =>
-          line.startsWith("Accuracy:")
-        );
-        const predictionLine = outputLines.find((line: string) =>
-          line.startsWith("Predicted Health:")
-        );
-
-        if (accuracyLine) {
-          setAccuracy(accuracyLine.split(":")[1].trim());
-        }
-
-        if (predictionLine) {
-          const healthValue = predictionLine.split(":")[1].trim();
-          setPrediction(healthValue === "1" ? "Healthy" : "Not Healthy");
-        } else {
-          setPrediction(data.output);
-        }
-      } else {
-        setPrediction(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      console.error("Error predicting health:", error);
-      setPrediction("Failed to predict health");
-    } finally {
-      setIsPredicting(false);
-    }
+      const parsed = JSON.parse(eda);
+      if (!Array.isArray(parsed) || parsed.length < 10 || parsed.length > 20000 || parsed.some(v => typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 100)) throw new Error("Enter a JSON array of 10-20000 valid EDA readings, in microsiemens.");
+      const res = await fetch("/api/run-model", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: "eda_window", eda_readings: parsed }) });
+      const value = await res.json();
+      if (!res.ok || !value.success) throw new Error(value.error || "Model unavailable");
+      setModelResult(`${value.result.stress_state} experimental phase estimate. Not a diagnosis or reliable personal prediction.`);
+    } catch (error) { setModelResult(error instanceof Error ? error.message : "Could not run model"); }
+    finally { setBusy(false); }
   };
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <Card className="col-span-1 bg-white-800/50 border-black backdrop-blur-sm p-6 flex flex-col items-center justify-center">
-        <h2 className="text-xl font-semibold mb-6 text-black-200">
-          Your Health Profile
-        </h2>
-        <HumanAvatar healthData={healthData} />
-
-        {/* Predict Health Button */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={handlePredictHealth}
-            disabled={isPredicting}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
-          >
-            {isPredicting ? "Predicting..." : "Predict Health"}
-          </button>
-
-          {prediction && (
-            <div className="mt-4">
-              <div
-                className={`text-lg font-bold ${
-                  prediction === "Healthy" ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {prediction}
-              </div>
-              {accuracy && (
-                <div className="text-sm text-gray-600">
-                  Accuracy: {accuracy}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Card>
-
-      <div className="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <StatCard
-          title="Heart Rate"
-          value={`${healthData.heartRate}`}
-          unit="bpm"
-          icon={<Heart className="h-5 w-5 text-rose-400" />}
-          color="rose"
-        />
-
-        <StatCard
-          title="Steps"
-          value={healthData.steps.toLocaleString()}
-          unit="steps"
-          icon={<Footprints className="h-5 w-5 text-blue-400" />}
-          color="blue"
-        />
-
-        <StatCard
-          title="Calories"
-          value={healthData.calories.toLocaleString()}
-          unit="kcal"
-          icon={<Flame className="h-5 w-5 text-amber-400" />}
-          color="amber"
-        />
-
-        <StatCard
-          title="Sleep"
-          value={healthData.sleep}
-          unit=""
-          icon={<Moon className="h-5 w-5 text-indigo-400" />}
-          color="indigo"
-        />
-
-        <StatCard
-          title="Activity"
-          value={healthData.activity.minutes.toString()}
-          unit="min"
-          icon={<Activity className="h-5 w-5 text-emerald-400" />}
-          color="emerald"
-          subtitle={`${healthData.activity.intensity}% intensity`}
-        />
-
-        <StatCard
-          title="Stress Level"
-          value={healthData.stress.toString()}
-          unit="%"
-          icon={<Timer className="h-5 w-5 text-purple-400" />}
-          color="purple"
-        />
+  return <div className="journal">
+    <header className="journal-header"><span className="brand"><Activity size={17} aria-hidden="true" /> Human digital twin</span><button className="mode-toggle" onClick={() => setDemo(!demo)} aria-pressed={demo}>{demo ? "Demo mode · switch to live" : "Live mode · view demo"}</button></header>
+    <div className="intro"><p className="eyebrow">Your signal journal</p><h1>A day in signals</h1><p>Wearable data, with room to see the whole picture.</p></div>
+    <div className={`connection ${demo ? "demo" : ""}`} role="status"><Radio size={15} aria-hidden="true" /><span>{demo ? "Illustrative demo data. These are not your live readings." : status}</span></div>
+    <nav className="journal-tabs" aria-label="Dashboard sections">{["Trends","Model","Settings"].map(name=><button key={name} onClick={()=>setTab(name)} aria-current={tab===name ? "page" : undefined}>{name}</button>)}</nav>
+    {tab === "Trends" && <>
+      <div className="periods" role="group" aria-label="Trend period">{["Today","7 days","30 days"].map(name=><button key={name} onClick={()=>setRange(name)} aria-pressed={range===name}>{name}</button>)}</div>
+      <div className="dashboard-grid">
+        <section className="heart-panel panel"><div className="panel-top"><div><div className="metric-label"><Heart size={16} /> Heart rate</div><div className="heart-value">{format(shown.bpm)}<span>bpm</span></div></div><span className="badge">{demo ? "Sample trend" : updated ? "Latest fetch" : "No data"}</span></div>
+          {chartValues.length >= 2 ? <><svg className="trend-chart" viewBox="0 0 336 154" role="img" aria-label={`${demo ? "Illustrative" : "This-session fetched"} heart rate trend, ${low} to ${high} BPM`}>
+          {[0,.5,1].map(f=><g key={f}><line x1="0" x2="286" y1={115-f*95} y2={115-f*95} stroke="#eae9ea" /><text x="296" y={119-f*95}>{Math.round(low+(high-low)*f)}</text></g>)}
+          <path d={path} fill="none" stroke="#73a89a" strokeWidth="3" strokeLinejoin="round" /><text x="0" y="149">{demo ? "09:00" : labelTime(points[0].at)}</text><text x="248" y="149">{demo ? "15:00" : labelTime(points[points.length-1].at)}</text></svg>
+          <div className="chart-caption"><span>{demo ? "Sample day, 09:00-15:00" : "Fetched during this session"}</span><span>{demo ? "Illustrative" : "bpm"}</span></div></> : <div className="empty-chart"><Activity size={25} /><strong>{range !== "Today" ? "History isn't available yet" : "Waiting for a trend"}</strong><p>{range !== "Today" ? "The current backend only returns the latest metrics. No week or month history is fabricated." : "Two readings are needed to draw a chart. Connect your data service or switch to the clearly labeled demo."}</p></div>}
+        </section>
+        <div className="side-metrics"><Metric icon={<Footprints size={17}/>} title="Movement" value={format(shown.steps)} unit="steps" detail={demo ? "Illustrative daily total" : "Latest reported total"} /><Metric icon={<Moon size={17}/>} title="Sleep" value={shown.sleep || "--"} unit="" detail={demo ? "Illustrative duration" : "Latest reported duration"} /></div>
+        <section className="energy-panel panel"><div className="panel-top"><h2>Metric details</h2><Flame size={18}/></div><div className="metric-detail"><span>Energy</span><strong>{format(shown.calories)} kcal</strong></div><p className="small muted">{demo ? "Demo values. Switch to live mode for your data service." : "Missing metrics stay blank. No synthetic fallback values."}</p></section>
+        <section className="research-panel"><div className="research-title"><Beaker size={17}/><h2>Stress model: research only</h2></div><p>EDA window validation: <strong>56.7%</strong> on 60 participants. The uncertainty interval is 49.2%-64.2%, including chance.</p><p>Requires skin-conductance (EDA) hardware. Your current watch sender does not provide this signal. Not a health diagnosis.</p><button className="text-button" onClick={()=>setTab("Model")}>Explore the model <ArrowUpRight size={14}/></button></section>
       </div>
-    </div>
-  );
+    </>}
+    {tab === "Model" && <section className="panel model-panel"><p className="eyebrow">Experimental model lab</p><h2>Real signals. Honest limits.</h2><p>This model estimates controlled relax/stress phases using EDA windows, not mental-health status. ECG-derived HRV was tested but did not improve performance.</p><dl className="model-facts"><div><dt>Full usable cohort</dt><dd>60 people · 120 records</dd></div><div><dt>Balanced accuracy</dt><dd>56.7%</dd></div><div><dt>95% bootstrap interval</dt><dd>49.2%-64.2%</dd></div><div><dt>Validation</dt><dd>Nested participant-disjoint folds</dd></div></dl><p className="small muted">The interval includes chance and is conditional on this evaluation. Controlled lab data are not daily-life validation.</p><div className="notice"><strong>EDA hardware required</strong><p>The current Wear OS sender has BPM, steps, calories and sleep only. Those cannot replace skin-conductance measurements or beat-to-beat RR intervals.</p></div><label htmlFor="eda-window">Import a research EDA window</label><p className="small muted">Paste a JSON array of valid readings in microsiemens from one comparable resting window, about 2 minutes. Not demo BPM values.</p><textarea id="eda-window" value={eda} onChange={e=>setEda(e.target.value)} placeholder="[ ...valid EDA readings... ]" rows={4}/><button className="primary-button" onClick={evaluate} disabled={busy || !eda.trim()}>{busy ? "Running..." : "Run research model"}</button>{modelResult && <p className="notice" role="status">{modelResult}</p>}<a className="source-link" href="https://physionet.org/content/qol-stress/1.0.0/" target="_blank" rel="noreferrer">QoL_Stress dataset · CC BY 4.0 <ArrowUpRight size={14}/></a></section>}
+    {tab === "Settings" && <section className="panel model-panel"><Settings2 size={23}/><h2>Connection settings</h2><p>Set <code>GET_HEALTH_URL</code> on the server to your own Appwrite endpoint ending in <code>/get-health-data</code>. No secrets belong in this dashboard.</p><p>The app checks the data service every 30 seconds. The current backend does not provide sample timestamps, durable history or per-user storage. Live watch and Appwrite integration remain unverified.</p><p>Model setup: install Python dependencies and train the trusted local artifact with <code>python ml/stress_model.py train</code>. EDA collection needs separate supported hardware and a sender/storage upgrade.</p><button className="primary-button" onClick={()=>{setDemo(!demo);setTab("Trends");}}>{demo ? "Return to live mode" : "Explore labeled demo"}</button></section>}
+    <footer className="journal-footer"><span>Human digital twin</span><span>{demo ? "Demo · not personal readings" : updated ? `Fetched at ${labelTime(updated)}` : "Awaiting connection"}</span></footer>
+  </div>;
 }
+function Metric({icon,title,value,unit,detail}:{icon:React.ReactNode;title:string;value:string;unit:string;detail:string}) { return <section className="panel metric-panel"><div className="metric-label">{icon}{title}</div><div className="metric-value">{value} {unit && <span>{unit}</span>}</div><p className="small muted">{detail}</p></section>; }
