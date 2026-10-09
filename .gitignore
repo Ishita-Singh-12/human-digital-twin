@@ -1,1 +1,8 @@
 *.csv
+
+!ml/data/qol_stress.csv
+.venv/
+__pycache__/
+.env
+.env.local
+*.pyc
