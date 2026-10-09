@@ -44,7 +44,7 @@ class HealthSender(private val context: Context) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     
     // Base URL for all health data
-    private val baseUrl = APPWRITE_FUNCTION_BASE_URL
+    private val baseUrl = BuildConfig.HEALTH_BASE_URL.trimEnd('/')
     
     // Store the latest values for all metrics
     private var latestBpm: Double? = null
@@ -550,6 +550,10 @@ class HealthSender(private val context: Context) {
 
     // Generic method to send data to server
     private fun <T> sendDataToServer(data: T, endpoint: String, dataType: String) {
+        if (baseUrl.isBlank()) {
+            Log.w(TAG, "Set HDT_HEALTH_BASE_URL before sending watch metrics")
+            return
+        }
         scope.launch {
             try {
                 val payload = when (data) {

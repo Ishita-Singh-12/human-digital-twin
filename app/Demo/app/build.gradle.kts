@@ -14,6 +14,10 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        val healthUrl = providers.gradleProperty("HDT_HEALTH_BASE_URL")
+            .orElse(providers.environmentVariable("HDT_HEALTH_BASE_URL"))
+            .getOrElse("")
+        buildConfigField("String", "HEALTH_BASE_URL", "\"${healthUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -38,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
