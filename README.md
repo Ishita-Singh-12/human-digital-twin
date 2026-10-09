@@ -67,13 +67,13 @@ npx tsc --noEmit
 npm run build
 ```
 
-Use a Node server with Python and the model files available, or the supplied
-Docker setup. Static hosting and edge runtimes cannot spawn Python. Appwrite
-must be configured separately. The existing sample Appwrite function stores
-values in process memory, so cold starts and multiple instances can lose or
-split readings. It is not a durable, authenticated per-user health datastore.
-The existing dashboard contains demo fallback metrics; its redesign must
-clearly separate demo values from live data. UI redesign is pending selection.
+Use a Node server with Python and model files, or the Docker setup. The Appwrite
+function now uses timestamped, private database documents and descriptive hourly/daily
+aggregates. See `appwrite_function/SETUP.md` for required schema, indexes, authenticated
+execution and dashboard platform configuration. Deployment alone does not provision
+Appwrite. The dashboard signs into Appwrite before reading personal data; demo mode
+remains clearly labeled. The Wear OS sender still needs authenticated session handling
+and physical-device testing; anonymous legacy POSTs are deliberately rejected.
 
 See `ml/MODEL_CARD.md` for the richer ECG/EDA pipeline and its limits.
 Train its local artifact with `.venv/bin/python ml/stress_model.py train`.
